@@ -3,11 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/Pedro1/Documents/SD/assignment1/MuseumHeistSD/src/museumheistsd/entities/Museum.java</file>
-            <file>file:/home/Pedro1/Documents/SD/assignment1/MuseumHeistSD/src/museumheistsd/SharedRegion.java</file>
-            <file>file:/home/Pedro1/Documents/SD/assignment1/MuseumHeistSD/src/museumheistsd/entities/Room.java</file>
+            <file>file:/home/Pedro1/Documents/SD/assignment1/MuseumHeistSD/src/museumheistsd/sharedregions/AssaultParty.java</file>
+            <file>file:/home/Pedro1/Documents/SD/assignment1/MuseumHeistSD/src/museumheistsd/interfaces/IAssaultParty.java</file>
             <file>file:/home/Pedro1/Documents/SD/assignment1/MuseumHeistSD/src/museumheistsd/entities/MasterThief.java</file>
-            <file>file:/home/Pedro1/Documents/SD/assignment1/MuseumHeistSD/src/museumheistsd/MuseumHeistSD.java</file>
+            <file>file:/home/Pedro1/Documents/SD/assignment1/MuseumHeistSD/src/museumheistsd/entities/Thief.java</file>
         </group>
     </open-files>
 </project-private>
