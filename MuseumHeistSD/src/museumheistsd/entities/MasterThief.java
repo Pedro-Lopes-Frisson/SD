@@ -14,11 +14,11 @@ public class MasterThief extends Thread {
     @Override
     public void run() {
         while(true){
-            //do something
+            System.out.println("ola");
         }
     }
 
-    private MasterThief(IControlCollectionSite css, IConcentrationSite cs){
+    public MasterThief(IControlCollectionSite css, IConcentrationSite cs){
         status = MTStatus.PLANNING_THE_HEIST;
         this.cs = cs;
         this.ccs = css;

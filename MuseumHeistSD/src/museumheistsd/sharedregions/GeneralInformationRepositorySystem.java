@@ -4,8 +4,10 @@
  */
 package museumheistsd.sharedregions;
 
+import java.util.Arrays;
 import museumheistsd.entities.MasterThief;
 import museumheistsd.entities.Thief;
+import museumheistsd.interfaces.IAssaultParty;
 import museumheistsd.interfaces.IConcentrationSite;
 import museumheistsd.interfaces.IControlCollectionSite;
 import museumheistsd.interfaces.IGeneralRepository;
@@ -18,34 +20,90 @@ import museumheistsd.interfaces.IMuseum;
  */
 public class GeneralInformationRepositorySystem implements IGeneralRepository {
 
+    /**
+     * Museum to be assaulted by AssaultParties.
+     */
+    private final IMuseum museum;
+
+    /**
+     * The control and collection site.
+     */
+    private final IControlCollectionSite controlCollection;
+
+    /**
+     * Concentration site where the OrdinaryThieves wait to be assigned to an
+     * AssaultParty.
+     */
+    private final IConcentrationSite concentration;
+
+    /**
+     * AssaultParties to be used in the simulation.
+     */
+    private final IAssaultParty[] parties;
+
+    /**
+     * MasterThieve that controls and assigns OrdinaryThieves to AssaultParties.
+     */
+    private final MasterThief master;
+
+    /**
+     * OrdinaryThieves array
+     */
+    private final Thief[] thieves;
+
+    /**
+     * Logger object used to log the state of this GeneralRepository
+     */
+    private final ILogger logger;
+
+    public GeneralInformationRepositorySystem(int totalThieves, int totalRooms, int minPaintings, int maxPaintings, int minRooms, int maxRooms, int nParties, int thiefMaxAgility, int thiefMinAgility, int thiefMaxDisplacement) {
+        this.museum = SharedMuseum.createMuseum(totalRooms, minPaintings, maxPaintings, minRooms, maxRooms);
+        this.concentration = new SharedConcentrationSite();
+        this.controlCollection = new SharedControlCollectionSite();
+        this.parties = new IAssaultParty[nParties];
+        this.master = new MasterThief(this.controlCollection, this.concentration);
+
+        this.thieves = new Thief[totalThieves - 1];
+        for (int i = 0; i < totalThieves - 1; i++) {
+            thieves[i] = Thief.createThief(thiefMinAgility, thiefMaxAgility, thiefMaxDisplacement, i);
+        }
+
+        this.logger = new SharedLogger();
+    }
+
     @Override
     public ILogger getLogger() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.logger;
     }
 
     @Override
     public IMuseum getMuseum() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.museum;
     }
 
     @Override
     public IControlCollectionSite getControlCollectionSite() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.controlCollection;
     }
 
     @Override
     public IConcentrationSite getConcentrationSite() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.concentration;
     }
 
     @Override
     public MasterThief getMasterThief() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.master;
     }
 
     @Override
     public Thief[] getOrdinaryThieves() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.thieves;
     }
-    
+
+    public void startSimulation() {
+        Arrays.asList(thieves).forEach(t -> t.start());
+        master.start();
+    }
+
 }

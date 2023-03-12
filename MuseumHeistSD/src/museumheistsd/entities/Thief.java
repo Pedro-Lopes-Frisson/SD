@@ -1,5 +1,5 @@
 package museumheistsd.entities;
-
+import java.util.Random;
 /**
  * Ordinary Thief
  * This thief will be the own who performs actions that lead to the stealing of a canvas.
@@ -8,6 +8,11 @@ package museumheistsd.entities;
  * @author Pedro1
  */
 public class Thief extends Thread {
+
+    public static Thief createThief(int thiefMinAgility, int thiefMaxAgility, int thiefMaxDisplacement, int id) {
+        Random r = new Random();
+        return new Thief(r.nextInt(thiefMaxAgility - thiefMinAgility) + thiefMinAgility, id,thiefMaxDisplacement);
+    }
    
     private final int agility;
     private final int thiefID;
@@ -16,13 +21,13 @@ public class Thief extends Thread {
     private int position;
     private int hasCanvas;
 
-    public Thief(int agility, int id, int thiefID, TStatus status, int maxDisplacement, int partyID, int position, int hasCanvas) {
+    public Thief(int agility, int thiefID, int maxDisplacement) {
         this.agility = agility;
         this.thiefID = thiefID;
-        this.status = status;
-        this.partyID = partyID;
-        this.position = position;
-        this.hasCanvas = hasCanvas;
+        this.status = TStatus.OUTSIDE;
+        this.partyID = -1;
+        this.position = 0;
+        this.hasCanvas = 0;
     }
 
     @Override
@@ -33,7 +38,7 @@ public class Thief extends Thread {
     @Override
     public void run() {
         while (true) {
-            // do something
+            System.out.println("ola");
         }
     }
     

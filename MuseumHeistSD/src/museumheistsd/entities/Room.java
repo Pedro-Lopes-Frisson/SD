@@ -9,8 +9,12 @@ public class Room {
         this.distance = distance;
     }
     
-    public Room createRoom(int minPaintings, int maxPaintings, int minDistance, int maxDistance){
+    public static Room createRoom(int minPaintings, int maxPaintings, int minDistance, int maxDistance){
         Random r = new Random();
         return new Room(r.nextInt(maxPaintings - minPaintings) + minPaintings, r.nextInt(maxDistance - minDistance) + minDistance);
     };
+
+    public boolean decrementCanvas() {
+        return --totalPaintings > 0;
+    }
 }

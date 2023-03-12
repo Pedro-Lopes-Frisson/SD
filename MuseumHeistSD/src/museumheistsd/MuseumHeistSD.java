@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.util.Properties;
+import museumheistsd.sharedregions.GeneralInformationRepositorySystem;
 
 /**
  *
@@ -24,14 +25,8 @@ public class MuseumHeistSD {
         System.out.println("Args: " + args.length);
 
         Properties prop = new Properties();
-        int TotalThief  = 0;
-        int totalThief  = 0;
-        int totalRooms  = 0;
-        int minPaintings= 0;
-        int maxPaintings= 0;
-        int minRooms    = 0;
-        int maxRooms    = 0;
-
+        int totalThief = 0, minPaintings = 0,
+                maxPaintings = 0, nRooms = 0, nParties = 0, thiefMaxAgility = 0, thiefMinAgility = 0, thiefMaxDisplacement = 0, minDistanceRooms = 0, maxDistanceRooms = 0, assaultPartySize = 0;
 
         try (InputStream input = new FileInputStream(args[0])) {
 
@@ -39,29 +34,26 @@ public class MuseumHeistSD {
             prop.load(input);
 
             // get the property value and print it out
-            TotalThief   = Integer.parseInt(prop.getProperty("TotalThief", "10"));
-            totalThief   = Integer.parseInt(prop.getProperty("totalThief","10"));
-            totalRooms   = Integer.parseInt(prop.getProperty("totalRooms","10"));
-            minPaintings = Integer.parseInt(prop.getProperty("minPaintings","11"));
-            maxPaintings = Integer.parseInt(prop.getProperty("maxPaintings","1"));
-            minRooms     = Integer.parseInt(prop.getProperty("minRooms","9"));
-            maxRooms     = Integer.parseInt(prop.getProperty("maxRooms","12"));
-            
+            totalThief = Integer.parseInt(prop.getProperty("totalThief", "7"));
+            thiefMinAgility = Integer.parseInt(prop.getProperty("thiefMinAgility", "2"));
+            thiefMaxAgility = Integer.parseInt(prop.getProperty("thiefMaxAgility", "6"));
+
+            nRooms = Integer.parseInt(prop.getProperty("nRooms", "5"));
+            minPaintings = Integer.parseInt(prop.getProperty("minPaintings", "8"));
+            maxPaintings = Integer.parseInt(prop.getProperty("maxPaintings", "16"));
+            minDistanceRooms = Integer.parseInt(prop.getProperty("minDistanceRooms", "15"));
+            maxDistanceRooms = Integer.parseInt(prop.getProperty("maxDistanceRooms", "30"));
+
+            assaultPartySize = Integer.parseInt(prop.getProperty("assaultPartySize", "3"));
+            thiefMaxDisplacement = Integer.parseInt(prop.getProperty("thiefMaxDisplacement", "3"));
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.err.println(ex.toString());
             System.exit(-1);
         }
 
-        System.out.println(TotalThief  );
-        System.out.println(totalThief  );
-        System.out.println(totalRooms  );
-        System.out.println(minPaintings);
-        System.out.println(maxPaintings);
-        System.out.println(minRooms    );
-        System.out.println(maxRooms    );
-
-
+        GeneralInformationRepositorySystem grs = new GeneralInformationRepositorySystem(totalThief, nRooms, minPaintings, maxPaintings, minDistanceRooms, maxDistanceRooms, nParties, thiefMaxAgility, thiefMinAgility, thiefMaxDisplacement);
+        grs.startSimulation();
     }
-    
+
 }

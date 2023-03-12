@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="MuseumHeistSD">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/MuseumHeistSD/dist/MuseumHeistSD.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
