@@ -61,14 +61,16 @@ public class GeneralInformationRepositorySystem implements IGeneralRepository {
         this.concentration = new SharedConcentrationSite();
         this.controlCollection = new SharedControlCollectionSite();
         this.parties = new IAssaultParty[nParties];
-        this.master = new MasterThief(this.controlCollection, this.concentration);
+
+        this.logger = new SharedLogger();
+
+        this.master = new MasterThief(this.controlCollection, this.concentration, getLogger(), 1);
 
         this.thieves = new Thief[totalThieves - 1];
         for (int i = 0; i < totalThieves - 1; i++) {
             thieves[i] = Thief.createThief(thiefMinAgility, thiefMaxAgility, thiefMaxDisplacement, i);
         }
 
-        this.logger = new SharedLogger();
     }
 
     @Override

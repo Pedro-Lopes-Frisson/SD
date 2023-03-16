@@ -5,6 +5,7 @@
 package museumheistsd.sharedregions;
 
 import java.util.Random;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import museumheistsd.entities.Room;
 import museumheistsd.interfaces.IMuseum;

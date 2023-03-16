@@ -7,31 +7,30 @@ import museumheistsd.entities.Thief;
  * @author Pedro1
  */
 public interface IAssaultParty {
-    
-    
-    public int getID() throws Exception;
-    
-    public int getTarget() throws Exception;
 
-    public int getState() throws Exception;
-            
-    public boolean partyFull() throws Exception;
+    int getID() throws Exception;
     
-    public int[] getThieves() throws Exception;
-    
-    public void prepareParty(Object room) throws Exception;
-    
-    public void addThief(Thief thief) throws Exception;
-    
-    public void removeThief(int id) throws Exception;
-            
-    public void sendParty() throws Exception;
-    
-    public int crawlIn(Thief thief) throws Exception;
-    
-    public boolean keepCrawling(Thief thief) throws Exception;
-    
-    public void reverseDirection(Thief thief) throws Exception;
+    int getTarget() throws Exception;
 
-    public int crawlOut(Thief thief) throws Exception;
+    int getState() throws Exception;
+            
+    boolean partyFull() throws Exception;
+    
+    int[] getThieves() throws Exception;
+    
+    void prepareParty(Object room) throws Exception;
+    
+    void addThief(Thief thief) throws Exception;
+    
+    void removeThief(int id) throws Exception;
+            
+    void sendParty() throws Exception;
+    
+    int crawlIn(Thief thief) throws Exception;
+    
+    boolean keepCrawling(Thief thief) throws Exception;
+    
+    void reverseDirection(Thief thief) throws Exception;
+
+    int crawlOut(Thief thief) throws Exception;
 }

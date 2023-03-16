@@ -1,5 +1,7 @@
 package museumheistsd.sharedregions;
 
+import museumheistsd.entities.MasterThief;
+import museumheistsd.entities.Thief;
 import museumheistsd.interfaces.ILogger;
 
 /*
@@ -12,5 +14,19 @@ import museumheistsd.interfaces.ILogger;
  * @author Pedro1
  */
 public class SharedLogger implements ILogger {
-    
+
+    @Override
+    public void log(MasterThief mt) {
+
+    }
+
+    @Override
+    public void log(Thief t) {
+
+    }
+
+    @Override
+    public void logResults() {
+
+    }
 }

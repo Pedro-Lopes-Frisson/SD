@@ -5,16 +5,16 @@ import museumheistsd.entities.Thief;
 
 public interface IGeneralRepository{
 
-    public ILogger getLogger();
+    ILogger getLogger();
     
-    public IMuseum getMuseum();
+    IMuseum getMuseum();
     
-    public IControlCollectionSite getControlCollectionSite();
+    IControlCollectionSite getControlCollectionSite();
     
-    public IConcentrationSite getConcentrationSite();
+    IConcentrationSite getConcentrationSite();
     
-    public MasterThief getMasterThief();
+    MasterThief getMasterThief();
     
-    public Thief[] getOrdinaryThieves();
+    Thief[] getOrdinaryThieves();
     
 }
