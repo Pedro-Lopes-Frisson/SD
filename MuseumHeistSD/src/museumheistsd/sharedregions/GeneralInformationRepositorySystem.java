@@ -5,6 +5,7 @@
 package museumheistsd.sharedregions;
 
 import java.util.Arrays;
+
 import museumheistsd.entities.MasterThief;
 import museumheistsd.entities.Thief;
 import museumheistsd.interfaces.IAssaultParty;
@@ -15,7 +16,6 @@ import museumheistsd.interfaces.ILogger;
 import museumheistsd.interfaces.IMuseum;
 
 /**
- *
  * @author Pedro1
  */
 public class GeneralInformationRepositorySystem implements IGeneralRepository {
@@ -56,13 +56,17 @@ public class GeneralInformationRepositorySystem implements IGeneralRepository {
      */
     private final ILogger logger;
 
-    public GeneralInformationRepositorySystem(int totalThieves, int totalRooms, int minPaintings, int maxPaintings, int minRooms, int maxRooms, int nParties, int thiefMaxAgility, int thiefMinAgility, int thiefMaxDisplacement) {
+    public GeneralInformationRepositorySystem(int totalThieves, int totalRooms, int minPaintings, int maxPaintings, int minRooms, int maxRooms, int elemsPerParty, int thiefMaxAgility, int thiefMinAgility, int thiefMaxDisplacement) {
         this.museum = SharedMuseum.createMuseum(totalRooms, minPaintings, maxPaintings, minRooms, maxRooms);
         this.concentration = new SharedConcentrationSite();
         this.controlCollection = new SharedControlCollectionSite();
-        this.parties = new IAssaultParty[nParties];
+        this.parties = new IAssaultParty[(int) (totalThieves / elemsPerParty)];
 
-        this.logger = new SharedLogger();
+        try {
+            this.logger = SharedLogger.createLogger(totalThieves - 1, totalThieves / elemsPerParty, elemsPerParty, this.museum);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         this.master = new MasterThief(this.controlCollection, this.concentration, getLogger(), 1);
 

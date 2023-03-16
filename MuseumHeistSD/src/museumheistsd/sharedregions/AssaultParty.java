@@ -75,7 +75,18 @@ public class AssaultParty implements IAssaultParty{
     public int crawlOut(Thief thief) throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
+    public int getRoomId() {
+        return 1;
+    }
+
+    public int getThiefPos(int j) {
+        return 1;
+    }
+    public int getThiefHasCanvas(int j) {
+        return 1;
+    }
+
 
     enum APStatus {
             // Status of MasterThief

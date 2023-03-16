@@ -9,10 +9,15 @@ public class MasterThief extends Thread {
     MTStatus status;
     ILogger logger;
     int id;
+    int paintingsStolen;
 
     @Override
     public long getId() {
         return id;
+    }
+
+    public int getStatus() {
+        return status.value;
     }
 
     @Override
@@ -48,6 +53,7 @@ public class MasterThief extends Thread {
     }
 
     private void collectCanvas() {
+        this.paintingsStolen++;
     }
 
     private void takeARest() {
@@ -66,19 +72,30 @@ public class MasterThief extends Thread {
     private void startOperations() throws Exception {
         this.ccs.startOperations();
         this.status = MTStatus.DECIDING_WHAT_TO_DO;
-        this.logger.log(this);
+        this.logger.setStatusMtThief(this);
+        this.logger.log();
     }
 
     public MasterThief(IControlCollectionSite css, IConcentrationSite cs, ILogger logger, int id) {
-        status = MTStatus.PLANNING_THE_HEIST;
         this.cs = cs;
         this.ccs = css;
         this.logger = logger;
         this.id = id;
+
+        try {
+            this.logger.setStatusMtThief(this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        status = MTStatus.PLANNING_THE_HEIST;
     }
 
     private final IControlCollectionSite ccs;
     private final IConcentrationSite cs;
+
+    public int getPaintingsStolen() {
+        return paintingsStolen;
+    }
 
 
     enum MTStatus {

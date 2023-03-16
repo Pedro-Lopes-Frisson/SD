@@ -33,4 +33,6 @@ public interface IAssaultParty {
     void reverseDirection(Thief thief) throws Exception;
 
     int crawlOut(Thief thief) throws Exception;
+
+    int getThiefHasCanvas(int i);
 }

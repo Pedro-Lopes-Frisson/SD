@@ -2,11 +2,19 @@ package museumheistsd.interfaces;
 
 import museumheistsd.entities.MasterThief;
 import museumheistsd.entities.Thief;
+import museumheistsd.sharedregions.AssaultParty;
 
 public interface ILogger{
 
-    public void log(MasterThief mt);
-    public void log(Thief t);
+    void beginLog() throws Exception;
+
+    void setStatusThief(Thread t) throws Exception;
+
+    void setStatusMtThief(Thread t) throws Exception;
+
+    void setAssaultParty(AssaultParty a) throws Exception;
+
+    public void log() throws Exception;
 
     void logResults();
 }

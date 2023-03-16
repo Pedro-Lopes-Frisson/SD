@@ -41,9 +41,20 @@ public class Thief extends Thread {
             System.out.println("ola");
         }
     }
-    
-    
-    
+
+    public int getStatus() {
+        return this.status.value;
+    }
+
+    public String getSituation() {
+        return "p";
+    }
+
+    public int getMD() {
+        return this.agility;
+    }
+
+
     enum TStatus {
             // Status of MasterThief
             /**
