@@ -1,5 +1,6 @@
 package museumheistsd.interfaces;
 
+import museumheistsd.entities.Room;
 import museumheistsd.entities.Thief;
 
 public interface IControlCollectionSite{
@@ -14,7 +15,7 @@ public interface IControlCollectionSite{
     
     int prepareNewParty(Object room) throws Exception;
     
-    void getRoomToAttack() throws Exception;
+    Room getRoomToAttack() throws Exception;
 
     void takeARest() throws Exception;
     

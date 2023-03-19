@@ -6,6 +6,7 @@ public class Room {
     int totalPaintings;
     int distance;
 
+    boolean isBeingAttacked = false;
     int paintingsLeft;
 
     private Room(int paintings, int distance) {
@@ -19,7 +20,9 @@ public class Room {
         return new Room(r.nextInt(maxPaintings - minPaintings) + minPaintings, r.nextInt(maxDistance - minDistance) + minDistance);
     }
 
-    ;
+    public boolean isBeingAttacked() {
+        return isBeingAttacked;
+    }
 
     public boolean decrementCanvas() {
         return --paintingsLeft > 0;

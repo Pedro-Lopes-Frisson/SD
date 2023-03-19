@@ -4,6 +4,8 @@
  */
 package museumheistsd.sharedregions;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -48,7 +50,17 @@ public class SharedMuseum implements IMuseum {
 
     @Override
     public Room[] getRooms() throws Exception {
-        return this.rooms;
+        return rooms;
+    }
+
+    @Override
+    public Room getRoomToAttack() {
+        return Arrays.stream(rooms).filter((Room r)-> ! r.isBeingAttacked() && r.getCanvasLeft() > 0 ).findFirst().orElse(null);
+    }
+
+    @Override
+    public void end() throws Exception {
+        IMuseum.super.end();
     }
 
 }

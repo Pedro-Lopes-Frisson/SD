@@ -10,10 +10,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.util.Properties;
+
 import museumheistsd.sharedregions.GeneralInformationRepositorySystem;
 
 /**
- *
  * @author Pedro1
  */
 public class MuseumHeistSD {

@@ -16,7 +16,7 @@ public interface IAssaultParty {
             
     boolean partyFull() throws Exception;
     
-    int[] getThieves() throws Exception;
+    Integer[] getThieves() throws Exception;
     
     void prepareParty(Object room) throws Exception;
     

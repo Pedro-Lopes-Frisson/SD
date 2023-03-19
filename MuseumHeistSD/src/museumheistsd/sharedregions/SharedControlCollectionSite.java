@@ -3,15 +3,24 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package museumheistsd.sharedregions;
+import java.util.concurrent.SynchronousQueue;
 
+import museumheistsd.entities.Room;
 import museumheistsd.entities.Thief;
 import museumheistsd.interfaces.IControlCollectionSite;
+import museumheistsd.interfaces.IMuseum;
 
 /**
  *
  * @author Pedro1
  */
 public class SharedControlCollectionSite implements IControlCollectionSite{
+
+    SynchronousQueue<Thief> thieves;
+    SynchronousQueue<AssaultParty> assaultParties;
+
+    SynchronousQueue<Thief> teamlessThieves;
+    IMuseum museum;
 
     @Override
     public void handACanvas() {
@@ -35,12 +44,14 @@ public class SharedControlCollectionSite implements IControlCollectionSite{
 
     @Override
     public int prepareNewParty(Object room) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        // create new Assault party and notify thieves
+        AssaultParty a = new AssaultParty();
+
     }
 
     @Override
-    public void getRoomToAttack() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Room getRoomToAttack() throws Exception {
+        return museum.getRoomToAttack();
     }
 
     @Override

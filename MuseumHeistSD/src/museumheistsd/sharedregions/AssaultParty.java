@@ -5,11 +5,25 @@
 package museumheistsd.sharedregions;
 import museumheistsd.entities.Thief;
 import museumheistsd.interfaces.IAssaultParty;
+
+import java.util.concurrent.SynchronousQueue;
+
 /**
  *
  * @author Pedro1
  */
 public class AssaultParty implements IAssaultParty{
+    int roomId;
+    SynchronousQueue<Thief> thieves;
+    int nThieves;
+    boolean crawlingIn;
+
+    public AssaultParty(int roomId, int nThieves, boolean crawlingIn) {
+        this.roomId = roomId;
+        this.thieves = new SynchronousQueue<>();
+        this.nThieves = nThieves;
+        this.crawlingIn = crawlingIn;
+    }
 
     @Override
     public int getID() throws Exception {
@@ -28,12 +42,13 @@ public class AssaultParty implements IAssaultParty{
 
     @Override
     public boolean partyFull() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.thieves.size() == nThieves;
     }
 
     @Override
-    public int[] getThieves() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Integer[] getThieves() throws Exception {
+
+        return (Integer []) thieves.stream().map(Thief::getId).toArray();
     }
 
     @Override
@@ -42,18 +57,21 @@ public class AssaultParty implements IAssaultParty{
     }
 
     @Override
-    public void addThief(Thief thief) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public synchronized void  addThief(Thief thief) throws Exception {
+        if(thieves.size() < nThieves){
+            this.thieves.add(thief);
+        }
+        else throw  new RuntimeException("Party already full");
     }
 
     @Override
-    public void removeThief(int id) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public synchronized void removeThief(int id) throws Exception {
+        thieves.removeIf((Thief t) -> t.getId() == id);
     }
 
     @Override
-    public void sendParty() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public synchronized void sendParty() throws Exception {
+        notifyAll();
     }
 
     @Override
