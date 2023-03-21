@@ -16,7 +16,7 @@ public interface IAssaultParty {
             
     boolean partyFull() throws Exception;
     
-    int[] getThieves() throws Exception;
+    Integer[] getThieves() throws Exception;
     
     void prepareParty(Object room) throws Exception;
     
@@ -34,5 +34,5 @@ public interface IAssaultParty {
 
     int crawlOut(Thief thief) throws Exception;
 
-    int getThiefHasCanvas(int i);
+    boolean getThiefHasCanvas(int i);
 }

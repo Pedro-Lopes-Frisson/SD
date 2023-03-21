@@ -27,16 +27,13 @@ public class MasterThief extends Thread {
             this.startOperations();
 
             while (this.status != MTStatus.PRESENTING_THE_REPORT) {
-                if(this.status == MTStatus.DECIDING_WHAT_TO_DO){
+                if (this.status == MTStatus.DECIDING_WHAT_TO_DO) {
                     this.appraiseSit();
-                }
-                else if (this.status == MTStatus.WAITING_FOR_GROUP_ARRIVAL) {
+                } else if (this.status == MTStatus.WAITING_FOR_GROUP_ARRIVAL) {
                     this.takeARest(); // wait for thief to reach the concentration site
                     this.collectCanvas(); //collect canvas
-                }
-                else if(this.status == MTStatus.ASSEMBLING_A_GROUP){
-                    this.prepareAssaultParties(); //  create assault parties
-                    this.sendAssaultParties(); // send each assault party to a room until the room is cleared0
+                } else if (this.status == MTStatus.ASSEMBLING_A_GROUP) {
+                    this.sendAssaultParty(this.prepareAssaultParty()); // send each assault party to a room until the room is cleared0
                 }
 
             }
@@ -46,21 +43,58 @@ public class MasterThief extends Thread {
             throw new RuntimeException(e);
         }
     }
-    private void sendAssaultParties(){
 
+    private void sendAssaultParty(int partyID) {
+        this.cs.sendParty(partyID);
     }
-    private void prepareAssaultParties() {
+
+    private int prepareAssaultParty() {
+        Room r;
+        try{
+            r = this.ccs.getRoomToAttack();
+            if (r == null){
+                // no more paintings to steal
+                System.err.println("Wrong state at the wrong time");
+                Thread.currentThread().interrupt();
+            }
+            int pId = this.ccs.prepareNewParty((Object) r);
+            this.cs.fillAssaultParty(pId);
+            return pId;
+        }catch (Exception e ){
+            throw  new RuntimeException(e);
+        }
     }
 
     private void collectCanvas() {
+
+        try {
+            this.ccs.collectCanvas();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         this.paintingsStolen++;
     }
 
     private void takeARest() {
-
+        try {
+            this.ccs.takeARest();
+            this.logger.log();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void appraiseSit() {
+        try {
+            this.ccs.appraiseSit();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            this.logger.log();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -98,7 +132,7 @@ public class MasterThief extends Thread {
     }
 
 
-    enum MTStatus {
+    public enum MTStatus {
         // Status of MasterThief
         /**
          * Status PLANNING_THE_HEIST.

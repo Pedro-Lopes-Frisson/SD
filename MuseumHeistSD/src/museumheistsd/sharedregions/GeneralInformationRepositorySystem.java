@@ -39,7 +39,7 @@ public class GeneralInformationRepositorySystem implements IGeneralRepository {
     /**
      * AssaultParties to be used in the simulation.
      */
-    private final IAssaultParty[] parties;
+    private IAssaultParty[] parties;
 
     /**
      * MasterThieve that controls and assigns OrdinaryThieves to AssaultParties.
@@ -58,9 +58,9 @@ public class GeneralInformationRepositorySystem implements IGeneralRepository {
 
     public GeneralInformationRepositorySystem(int totalThieves, int totalRooms, int minPaintings, int maxPaintings, int minRooms, int maxRooms, int elemsPerParty, int thiefMaxAgility, int thiefMinAgility, int thiefMaxDisplacement) {
         this.museum = SharedMuseum.createMuseum(totalRooms, minPaintings, maxPaintings, minRooms, maxRooms);
-        this.concentration = new SharedConcentrationSite();
-        this.controlCollection = new SharedControlCollectionSite();
         this.parties = new IAssaultParty[(int) (totalThieves / elemsPerParty)];
+        this.concentration = new SharedConcentrationSite(totalThieves, (int) (totalThieves / elemsPerParty), this.parties);
+        this.controlCollection = new SharedControlCollectionSite(totalThieves, museum,elemsPerParty);
 
         try {
             this.logger = SharedLogger.createLogger(totalThieves - 1, totalThieves / elemsPerParty, elemsPerParty, this.museum);
@@ -78,7 +78,7 @@ public class GeneralInformationRepositorySystem implements IGeneralRepository {
     }
 
     @Override
-    public ILogger getLogger() {
+    public synchronized ILogger getLogger() {
         return this.logger;
     }
 
