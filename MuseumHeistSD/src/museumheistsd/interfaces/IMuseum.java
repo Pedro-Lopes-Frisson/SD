@@ -10,4 +10,7 @@ public interface IMuseum{
     Room getRoomToAttack();
     default void end() throws Exception {}
 
+    void setClear(int roomId);
+
+    void decremmentCanvas(int roomId);
 }

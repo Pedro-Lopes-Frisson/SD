@@ -34,5 +34,5 @@ public interface IAssaultParty {
 
     int crawlOut(Thief thief) throws Exception;
 
-    int getThiefHasCanvas(int i);
+    boolean getThiefHasCanvas(int i);
 }

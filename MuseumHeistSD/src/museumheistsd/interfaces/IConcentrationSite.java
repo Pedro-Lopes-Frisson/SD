@@ -16,4 +16,5 @@ public interface IConcentrationSite{
     default void end() throws Exception {}
 
 
+    void sendParty(int partyId);
 }
