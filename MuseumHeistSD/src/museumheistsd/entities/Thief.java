@@ -1,5 +1,8 @@
 package museumheistsd.entities;
 
+import museumheistsd.interfaces.IConcentrationSite;
+import museumheistsd.interfaces.IControlCollectionSite;
+
 import java.util.Objects;
 import java.util.Random;
 
@@ -24,6 +27,9 @@ public class Thief extends Thread {
     private int position;
     private boolean hasCanvas;
 
+    private IConcentrationSite cs;
+    private IControlCollectionSite ccs;
+
     public boolean getHasCanvas() {
         return hasCanvas;
     }
@@ -36,13 +42,15 @@ public class Thief extends Thread {
         return partyID;
     }
 
-    public Thief(int agility, int thiefID, int maxDisplacement) {
+    public Thief(int agility, int thiefID, int maxDisplacement, IConcentrationSite cs, IControlCollectionSite ccs) {
         this.agility = agility;
         this.thiefID = thiefID;
         this.status = TStatus.OUTSIDE;
         this.partyID = -1;
         this.position = 0;
         this.hasCanvas = false;
+        this.cs = cs;
+        this.ccs = ccs;
     }
 
     @Override
@@ -53,8 +61,32 @@ public class Thief extends Thread {
     @Override
     public void run() {
         while (true) {
-            System.out.println("ola");
+            try {
+                if (this.status == TStatus.CONTROL_COLLECTION) {
+                    if (this.getHasCanvas()) {
+                        this.ccs.handACanvas(this);
+                    }
+                }
+                if(this.status == TStatus.CONCENTRATION_SITE){
+                    this.amINeeded(); // block until he is needed
+                    this.partyID = this.cs.prepareExcursion(this);
+                }
+                if(this.status == TStatus.CRAWLING_INWARDS){
+                    this.crawlIn();
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
+    }
+
+    private void crawlIn() {
+        this.ccs.
+    }
+
+    private void amINeeded() {
+        this.status = TStatus.CONCENTRATION_SITE;
     }
 
     public int getStatus() {
@@ -79,7 +111,7 @@ public class Thief extends Thread {
         /**
          * Status PLANNING_THE_HEIST.
          */
-        OUTSIDE(1000),
+        CONCENTRATION_SITE(1000),
         /**
          * Status DECIDING_WHAT_TO_DO.
          */
@@ -91,7 +123,9 @@ public class Thief extends Thread {
         /**
          * Status WAITING_FOR_GROUP_ARRIVAL.
          */
-        CRAWLING_OUTWARDS(4000);
+        CRAWLING_OUTWARDS(4000),
+
+        CONTROL_COLLECTION(5000);
 
         private TStatus(int value) {
             this.value = value;
