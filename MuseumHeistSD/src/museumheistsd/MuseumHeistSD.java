@@ -51,8 +51,19 @@ public class MuseumHeistSD {
             System.err.println(ex.toString());
             System.exit(-1);
         }
+        System.out.println(totalThief);
+        System.out.println(nRooms);
+        System.out.println(minPaintings);
+        System.out.println(maxPaintings);
+        System.out.println(minDistanceRooms);
+        System.out.println(maxDistanceRooms);
+        System.out.println(assaultPartySize);
+        System.out.println(thiefMaxAgility);
+        System.out.println(thiefMinAgility);
+        System.out.println(thiefMaxDisplacement);
 
-        GeneralInformationRepositorySystem grs = new GeneralInformationRepositorySystem(totalThief, nRooms, minPaintings, maxPaintings, minDistanceRooms, maxDistanceRooms, nParties, thiefMaxAgility, thiefMinAgility, thiefMaxDisplacement);
+        GeneralInformationRepositorySystem grs = new GeneralInformationRepositorySystem(totalThief, nRooms, minPaintings, maxPaintings,
+                minDistanceRooms, maxDistanceRooms, assaultPartySize, thiefMaxAgility, thiefMinAgility, thiefMaxDisplacement);
         grs.startSimulation();
     }
 

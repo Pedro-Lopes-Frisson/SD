@@ -58,7 +58,6 @@ public class SharedLogger implements ILogger {
     }
     public static SharedLogger createLogger(int nThieves, int nAssaultParties, int elemsPerParty, IMuseum museum) throws Exception {
         SharedLogger l = new SharedLogger(nThieves,nAssaultParties,elemsPerParty,museum);
-        l.log();
         return l;
     }
 
@@ -66,29 +65,6 @@ public class SharedLogger implements ILogger {
     @Override
     public void beginLog() throws Exception {
 
-    }
-
-    @Override
-    public void setStatusThief(Thread t) throws Exception {
-        long id = t.getId();
-        this.thieves[(int) id] = (Thief) t;
-        this.log();
-    }
-
-    @Override
-    public void setStatusMtThief(Thread t) throws Exception {
-        this.mThief = (MasterThief) t;
-        this.log();
-    }
-
-    @Override
-    public void setAssaultParty(AssaultParty a) throws Exception {
-        assaultParties[a.getID()] = a;
-        this.log();
-    }
-
-    @Override
-    public synchronized void log() throws Exception {
         StringBuilder s = new StringBuilder();
         s.append("MstT");
         for (int i = 1; i < nThieves + 1; i++) {
@@ -123,6 +99,36 @@ public class SharedLogger implements ILogger {
         }
 
         s.append("NP  DT".repeat(museum.getRooms().length));
+
+        try {
+            log.write(s.toString().getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void setStatusThief(Thread t) throws Exception {
+        long id = t.getId();
+        this.thieves[(int) id] = (Thief) t;
+        this.log();
+    }
+
+    @Override
+    public void setStatusMtThief(Thread t) throws Exception {
+        this.mThief = (MasterThief) t;
+        this.log();
+    }
+
+    @Override
+    public void setAssaultParty(AssaultParty a) throws Exception {
+        assaultParties[a.getID()] = a;
+        this.log();
+    }
+
+    @Override
+    public synchronized void log() throws Exception {
+        StringBuilder s = new StringBuilder();
 
         s.append("\n").append(String.format("%4d", mThief.getStatus()));
         for (int i = 1; i < nThieves + 1; i++) {

@@ -64,6 +64,7 @@ public class GeneralInformationRepositorySystem implements IGeneralRepository {
 
         try {
             this.logger = SharedLogger.createLogger(totalThieves - 1, totalThieves / elemsPerParty, elemsPerParty, this.museum);
+            this.logger.beginLog();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

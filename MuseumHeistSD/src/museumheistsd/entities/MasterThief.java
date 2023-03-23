@@ -24,6 +24,11 @@ public class MasterThief extends Thread {
     public void run() {
         try {
 
+            try {
+                this.logger.setStatusMtThief(this);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             this.startOperations();
 
             while (this.status != MTStatus.PRESENTING_THE_REPORT) {
@@ -115,13 +120,8 @@ public class MasterThief extends Thread {
         this.ccs = css;
         this.logger = logger;
         this.id = id;
-
-        try {
-            this.logger.setStatusMtThief(this);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         status = MTStatus.PLANNING_THE_HEIST;
+
     }
 
     private final IControlCollectionSite ccs;
