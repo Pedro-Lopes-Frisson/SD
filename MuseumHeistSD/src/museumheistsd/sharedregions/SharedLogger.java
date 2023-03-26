@@ -5,17 +5,15 @@ import museumheistsd.entities.Thief;
 import museumheistsd.interfaces.ILogger;
 import museumheistsd.interfaces.IMuseum;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Pedro1
@@ -24,24 +22,40 @@ public class SharedLogger implements ILogger {
 
     FileOutputStream log;
 
-    Thief[] thieves;
+    int[] thievesId;
+    int[] thievesStatus;
+    int[] thievesPartyId;
+    boolean[] thievesHasCanvas;
+    int[] thievesMD;
+    int[] thievesPartyIdPos;
+    int[] thievesSituation;
+
+    int[][] partyThievesId;
     int mtStatus;
     int nThieves;
     int nAssaultParties;
     int elemsPerParty;
 
-    AssaultParty assaultParties[];
+    int nRooms;
+
+    List<HashMap<String, Integer>> assaultParties;
     MasterThief mThief;
 
-    IMuseum museum;
+    int[] roomsDistance;
+    int[] roomsCanvasLeft;
 
     private SharedLogger(int nThieves, int nAssaultParties, int elemsPerParty, IMuseum museum) {
         this.nThieves = nThieves;
         this.nAssaultParties = nAssaultParties;
         this.elemsPerParty = elemsPerParty;
-        thieves = new Thief[nThieves];
-        this.museum = museum;
-        this.assaultParties = new AssaultParty[nAssaultParties];
+        thievesPartyId = new int[nThieves];
+        thievesPartyIdPos = new int[nThieves];
+        thievesStatus = new int[nThieves];
+        thievesMD = new int[nThieves];
+        partyThievesId = new int[nAssaultParties][elemsPerParty];
+        this.nRooms = 10;
+        roomsDistance = new int[nRooms];
+        roomsCanvasLeft = new int[nRooms];
         Path filePath = Path.of("log.txt");
         try {
             Files.deleteIfExists(filePath);
@@ -56,9 +70,9 @@ public class SharedLogger implements ILogger {
             throw new RuntimeException(e);
         }
     }
+
     public static SharedLogger createLogger(int nThieves, int nAssaultParties, int elemsPerParty, IMuseum museum) throws Exception {
-        SharedLogger l = new SharedLogger(nThieves,nAssaultParties,elemsPerParty,museum);
-        return l;
+        return new SharedLogger(nThieves, nAssaultParties, elemsPerParty, museum);
     }
 
 
@@ -66,7 +80,7 @@ public class SharedLogger implements ILogger {
     public void beginLog() throws Exception {
 
         StringBuilder s = new StringBuilder();
-        s.append("MstT");
+        s.append("MstT\t");
         for (int i = 1; i < nThieves + 1; i++) {
             s.append(" ").append("Thief ").append(i);
         }
@@ -86,7 +100,7 @@ public class SharedLogger implements ILogger {
         }
 
 
-        for (int i = 1; i < museum.getRooms().length + 1; i++) {
+        for (int i = 1; i < nRooms + 1; i++) {
             s.append("Room ").append(i);
         }
 
@@ -98,7 +112,7 @@ public class SharedLogger implements ILogger {
             s.append("\t");
         }
 
-        s.append("NP  DT".repeat(museum.getRooms().length));
+        s.append("NP  DT".repeat(nRooms));
 
         try {
             log.write(s.toString().getBytes(StandardCharsets.UTF_8));
@@ -108,22 +122,29 @@ public class SharedLogger implements ILogger {
     }
 
     @Override
-    public void setStatusThief(Thread t) throws Exception {
-        long id = t.getId();
-        this.thieves[(int) id] = (Thief) t;
+    public void setStatusThief(Thief t) throws Exception {
+        int id = (int) t.getId();
+        Thief tt = (Thief) t;
+        this.thievesHasCanvas[id] = ((Thief) t).getHasCanvas();
+        this.thievesStatus[id] = tt.getStatus();
+        this.thievesPartyId[id] = tt.getPartyID();
+        this.thievesPartyIdPos[id] = tt.getPartyPos();
+        this.assaultParties.get(tt.getPartyID()).put("ElemId", (int) tt.getId());
+        this.assaultParties.get(tt.getPartyID()).put("ElemPos", tt.getPartyPos());
+        this.assaultParties.get(tt.getPartyID()).put("ElemCV", tt.getHasCanvas() ? 1 : 0);
         this.log();
     }
 
     @Override
     public void setStatusMtThief(Thread t) throws Exception {
-        this.mThief = (MasterThief) t;
+        MasterThief mThief1 = (MasterThief) t;
+        this.mtStatus = mThief1.getStatus();
         this.log();
     }
 
     @Override
     public void setAssaultParty(AssaultParty a) throws Exception {
-        assaultParties[a.getID()] = a;
-        this.log();
+        assaultParties.get(a.getID()).put("Rid", a.getRoomId());
     }
 
     @Override
@@ -132,22 +153,23 @@ public class SharedLogger implements ILogger {
 
         s.append("\n").append(String.format("%4d", mThief.getStatus()));
         for (int i = 1; i < nThieves + 1; i++) {
-            s.append(" ").append(String.format("%4d  %s %d", thieves[i - 1].getStatus(), this.thieves[i - 1].getSituation(), this.thieves[i - 1].getMD())).append(i);
+            s.append(" ").append(String.format("%4d  %s %d", thievesStatus[i - 1], this.thievesPartyId[i - 1] == -1 ? "W" : "P", this.thievesMD[i - 1])).append(i);
         }
 
 
         for (int i = 1; i < nAssaultParties + 1; i++) {
-            s.append(String.format("%d\t", assaultParties[i - 1].getRoomId()));
+            s.append(String.format("%d\t", assaultParties.get(i - 1).get("Rid")));
+
             for (int j = 1; i < elemsPerParty + 1; i++) {
-                s.append(String.format(" %d %2d %d", thieves[j - 1].getId(), assaultParties[i - 1].getThiefPos(j), assaultParties[i - 1].getThiefHasCanvas(j - 1))).append(j).append("  ");
+                s.append(String.format(" %d %2d %d", thievesId[j - 1], thievesPartyIdPos[i - 1], thievesHasCanvas[i - 1] ? 1 : 0)).append(j).append("  ");
             }
             s.append("\t");
         }
 
+        for (int i = 0; i < nRooms; i++) {
+            s.append(String.format(" %2d %2d ", roomsCanvasLeft[i], roomsDistance[i]));
 
-        Arrays.stream(museum.getRooms()).forEach(room -> {
-            s.append(String.format("%2d %2d", room.getCanvasLeft(), room.getDistance()));
-        });
+        }
 
         try {
             log.write(s.toString().getBytes(StandardCharsets.UTF_8));
@@ -165,3 +187,4 @@ public class SharedLogger implements ILogger {
         }
     }
 }
+;

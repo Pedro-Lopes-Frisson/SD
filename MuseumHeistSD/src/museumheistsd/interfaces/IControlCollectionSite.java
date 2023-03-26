@@ -28,4 +28,5 @@ public interface IControlCollectionSite{
     int totalPaintingsStolen() throws Exception;
     
     default void end() throws Exception {}
+
 }

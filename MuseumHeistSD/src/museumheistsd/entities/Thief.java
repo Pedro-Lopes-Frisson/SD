@@ -1,7 +1,10 @@
 package museumheistsd.entities;
 
+import museumheistsd.interfaces.IAssaultParty;
 import museumheistsd.interfaces.IConcentrationSite;
 import museumheistsd.interfaces.IControlCollectionSite;
+import museumheistsd.interfaces.IMuseum;
+import museumheistsd.sharedregions.AssaultParty;
 
 import java.util.Objects;
 import java.util.Random;
@@ -15,10 +18,6 @@ import java.util.Random;
  */
 public class Thief extends Thread {
 
-    public static Thief createThief(int thiefMinAgility, int thiefMaxAgility, int thiefMaxDisplacement, int id) {
-        Random r = new Random();
-        return new Thief(r.nextInt(thiefMaxAgility - thiefMinAgility) + thiefMinAgility, id, thiefMaxDisplacement);
-    }
 
     private final int agility;
     private final int thiefID;
@@ -27,8 +26,30 @@ public class Thief extends Thread {
     private int position;
     private boolean hasCanvas;
 
+    private int maxDisplacement;
     private IConcentrationSite cs;
     private IControlCollectionSite ccs;
+    private IMuseum museum;
+
+    private AssaultParty assaultParty = null;
+
+    public Thief(int agility, int thiefID, int maxDisplacement, IConcentrationSite cs, IControlCollectionSite ccs, IMuseum museum) {
+        this.agility = agility;
+        this.thiefID = thiefID;
+        this.maxDisplacement = maxDisplacement;
+        this.status = TStatus.CONTROL_COLLECTION;
+        this.partyID = -1;
+        this.position = 0;
+        this.hasCanvas = false;
+        this.cs = cs;
+        this.ccs = ccs;
+        this.museum = museum;
+    }
+
+    public static Thief createThief(int thiefMinAgility, int thiefMaxAgility, int thiefMaxDisplacement, int id, IConcentrationSite cs, IControlCollectionSite ccs, IMuseum museum) {
+        Random r = new Random();
+        return new Thief(r.nextInt(thiefMaxAgility - thiefMinAgility) + thiefMinAgility, id, thiefMaxDisplacement, cs, ccs, museum);
+    }
 
     public boolean getHasCanvas() {
         return hasCanvas;
@@ -40,17 +61,6 @@ public class Thief extends Thread {
 
     public int getPartyID() {
         return partyID;
-    }
-
-    public Thief(int agility, int thiefID, int maxDisplacement, IConcentrationSite cs, IControlCollectionSite ccs) {
-        this.agility = agility;
-        this.thiefID = thiefID;
-        this.status = TStatus.OUTSIDE;
-        this.partyID = -1;
-        this.position = 0;
-        this.hasCanvas = false;
-        this.cs = cs;
-        this.ccs = ccs;
     }
 
     @Override
@@ -67,13 +77,27 @@ public class Thief extends Thread {
                         this.ccs.handACanvas(this);
                     }
                 }
-                if(this.status == TStatus.CONCENTRATION_SITE){
+
+                if (this.status == TStatus.CONCENTRATION_SITE) {
                     this.amINeeded(); // block until he is needed
                     this.partyID = this.cs.prepareExcursion(this);
                 }
-                if(this.status == TStatus.CRAWLING_INWARDS){
+
+                if (this.status == TStatus.CRAWLING_INWARDS) {
                     this.crawlIn();
+                    this.keepCrawling();
                 }
+
+                if (this.status == TStatus.CRAWLING_OUTWARDS) {
+                    this.crawlOut();
+                    this.keepCrawling();
+                }
+
+                if (this.status == TStatus.AT_A_ROOM) {
+                    this.museum.decremmentCanvas(this.assaultParty.getRoomId());
+                    this.crawlOut();
+                }
+
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -81,8 +105,38 @@ public class Thief extends Thread {
         }
     }
 
+    private void keepCrawling() {
+        try {
+            this.assaultParty.keepCrawling(this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void crawlIn() {
-        this.ccs.
+        if (this.assaultParty == null) {
+            System.err.println("No assault party assault");
+            Thread.currentThread().interrupt();
+        }
+        try {
+            this.status = TStatus.CRAWLING_INWARDS;
+            this.assaultParty.crawlIn(this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void crawlOut() {
+        if (this.assaultParty == null) {
+            System.err.println("No assault party assault");
+            Thread.currentThread().interrupt();
+        }
+        try {
+            this.status = TStatus.CRAWLING_OUTWARDS;
+            this.assaultParty.crawlOut(this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void amINeeded() {
@@ -94,17 +148,24 @@ public class Thief extends Thread {
     }
 
     public String getSituation() {
-        return "p";
+        return this.partyID == -1 ? "W" : "P";
     }
 
     public int getMD() {
-        return this.agility;
+        return this.maxDisplacement;
     }
 
     public void clearHasCanvas() {
         this.hasCanvas = false;
     }
 
+    public int getPartyPos() {
+        return this.assaultParty.getThiefPos(this.thiefID);
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     enum TStatus {
         // Status of MasterThief

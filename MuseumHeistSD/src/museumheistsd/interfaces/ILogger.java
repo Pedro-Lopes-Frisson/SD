@@ -8,7 +8,7 @@ public interface ILogger{
 
     void beginLog() throws Exception;
 
-    void setStatusThief(Thread t) throws Exception;
+    void setStatusThief(Thief t) throws Exception;
 
     void setStatusMtThief(Thread t) throws Exception;
 

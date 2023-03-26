@@ -60,7 +60,7 @@ public class GeneralInformationRepositorySystem implements IGeneralRepository {
         this.museum = SharedMuseum.createMuseum(totalRooms, minPaintings, maxPaintings, minRooms, maxRooms);
         this.parties = new IAssaultParty[(int) (totalThieves / elemsPerParty)];
         this.concentration = new SharedConcentrationSite(totalThieves, (int) (totalThieves / elemsPerParty), this.parties);
-        this.controlCollection = new SharedControlCollectionSite(totalThieves, museum,elemsPerParty);
+        this.controlCollection = new SharedControlCollectionSite(totalThieves, museum, elemsPerParty);
 
         try {
             this.logger = SharedLogger.createLogger(totalThieves - 1, totalThieves / elemsPerParty, elemsPerParty, this.museum);
@@ -73,7 +73,7 @@ public class GeneralInformationRepositorySystem implements IGeneralRepository {
 
         this.thieves = new Thief[totalThieves - 1];
         for (int i = 0; i < totalThieves - 1; i++) {
-            thieves[i] = Thief.createThief(thiefMinAgility, thiefMaxAgility, thiefMaxDisplacement, i);
+            thieves[i] = Thief.createThief(thiefMinAgility, thiefMaxAgility, thiefMaxDisplacement, i, concentration, controlCollection, museum);
         }
 
     }

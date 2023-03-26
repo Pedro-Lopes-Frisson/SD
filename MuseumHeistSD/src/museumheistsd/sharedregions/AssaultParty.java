@@ -16,6 +16,7 @@ import java.util.concurrent.SynchronousQueue;
 public class AssaultParty implements IAssaultParty {
     int id;
     int roomId;
+    int roomDistance;
     SynchronousQueue<Thief> walkingThieves;
     int nThieves;
     boolean crawlingIn;
@@ -23,6 +24,7 @@ public class AssaultParty implements IAssaultParty {
     int[] thievesDistance;
     Thief[] thieves;
     int intThieves = 0;
+    // estado para a assault party blocquear thieves que queriam dar crawlin antes de a party ser dispatched
 
     public AssaultParty(int id, int roomId, int nThieves, boolean crawlingIn) {
         this.roomId = roomId;
@@ -67,6 +69,7 @@ public class AssaultParty implements IAssaultParty {
     @Override
     public synchronized void addThief(Thief thief) throws Exception {
         thieves[intThieves] = thief;
+
         if (walkingThieves.size() < nThieves) {
             this.walkingThieves.add(thief);
         }
@@ -96,7 +99,7 @@ public class AssaultParty implements IAssaultParty {
 
     @Override
     public int crawlIn(Thief thief) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return 1;
     }
 
     @Override
